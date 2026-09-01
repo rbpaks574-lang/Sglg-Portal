@@ -177,13 +177,13 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // Barangay users (first 5 barangays get test accounts)
-        $barangays = Barangay::take(5)->get();
+        // Barangay users (all barangays get accounts: barangay1@silang.gov.ph ... barangay64@silang.gov.ph)
+        $barangays = Barangay::all();
         foreach ($barangays as $i => $barangay) {
             User::updateOrCreate(
                 ['email' => "barangay" . ($i + 1) . "@silang.gov.ph"],
                 [
-                    'name' => "Barangay Secretary " . ($i + 1),
+                    'name' => "Barangay Secretary " . $barangay->name,
                     'password' => Hash::make('password'),
                     'role' => 'barangay',
                     'barangay_id' => $barangay->id,
