@@ -23,22 +23,24 @@ chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 echo "==> Linking storage..."
 php artisan storage:link --force || true
 
-echo "==> Clearing and caching Laravel configuration..."
+echo "==> Clearing old caches & discovering packages..."
 php artisan config:clear || true
 php artisan route:clear || true
 php artisan view:clear || true
 php artisan package:discover --ansi || true
+
+echo "==> Running database migrations on TiDB..."
+php artisan migrate --force
+
+if [ "${DB_SEED_ON_BOOT}" = "true" ] || [ "${DB_SEED_ON_BOOT}" = "1" ]; then
+    echo "==> Seeding database (Admin, Checker, Barangays)..."
+    php artisan db:seed --force
+fi
+
+echo "==> Optimizing configuration & route caches..."
 php artisan config:cache || true
 php artisan route:cache || true
 php artisan view:cache || true
-
-echo "==> Running database migrations..."
-php artisan migrate --force || echo "Migration warning: check TiDB database connection credentials"
-
-if [ "${DB_SEED_ON_BOOT}" = "true" ] || [ "${DB_SEED_ON_BOOT}" = "1" ]; then
-    echo "==> Seeding database..."
-    php artisan db:seed --force || echo "Seeding completed or already present"
-fi
 
 echo "==> Starting Web Server (Supervisord)..."
 exec supervisord -c /etc/supervisor/conf.d/supervisord.conf

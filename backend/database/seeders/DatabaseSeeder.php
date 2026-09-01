@@ -37,13 +37,15 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($barangays as $i => $name) {
-            Barangay::create([
-                'name' => $name,
-                'captain_name' => "Captain " . $name,
-                'secretary_name' => "Secretary " . $name,
-                'contact_number' => '09171234' . str_pad($i + 1, 3, '0', STR_PAD_LEFT),
-                'email' => strtolower(str_replace([' ', '(', ')'], '', $name)) . '@silang.gov.ph',
-            ]);
+            Barangay::firstOrCreate(
+                ['name' => $name],
+                [
+                    'captain_name' => "Captain " . $name,
+                    'secretary_name' => "Secretary " . $name,
+                    'contact_number' => '09171234' . str_pad($i + 1, 3, '0', STR_PAD_LEFT),
+                    'email' => strtolower(str_replace([' ', '(', ')'], '', $name)) . '@silang.gov.ph',
+                ]
+            );
         }
     }
 
@@ -131,15 +133,20 @@ class DatabaseSeeder extends Seeder
             $documents = $catData['documents'];
             unset($catData['documents']);
 
-            $category = Category::create($catData);
+            $category = Category::firstOrCreate(['slug' => $catData['slug']], $catData);
 
             foreach ($documents as $i => $doc) {
-                RequiredDocument::create(array_merge($doc, [
-                    'category_id' => $category->id,
-                    'sort_order' => $i + 1,
-                    'accepted_formats' => 'pdf,docx,xlsx',
-                    'deadline' => now()->addMonths(3),
-                ]));
+                RequiredDocument::firstOrCreate(
+                    [
+                        'category_id' => $category->id,
+                        'name' => $doc['name'],
+                    ],
+                    array_merge($doc, [
+                        'sort_order' => $i + 1,
+                        'accepted_formats' => 'pdf,docx,xlsx',
+                        'deadline' => now()->addMonths(3),
+                    ])
+                );
             }
         }
     }
@@ -147,34 +154,43 @@ class DatabaseSeeder extends Seeder
     private function seedUsers(): void
     {
         // Admin
-        User::create([
-            'name' => 'DILG Admin',
-            'email' => 'admin@dilg-silang.gov.ph',
-            'password' => Hash::make('password'),
-            'role' => 'admin',
-            'position' => 'DILG Municipal Officer',
-        ]);
+        User::updateOrCreate(
+            ['email' => 'admin@dilg-silang.gov.ph'],
+            [
+                'name' => 'DILG Admin',
+                'password' => Hash::make('password'),
+                'role' => 'admin',
+                'position' => 'DILG Municipal Officer',
+                'is_active' => true,
+            ]
+        );
 
         // Checker
-        User::create([
-            'name' => 'DILG Checker',
-            'email' => 'checker@dilg-silang.gov.ph',
-            'password' => Hash::make('password'),
-            'role' => 'checker',
-            'position' => 'Document Reviewer',
-        ]);
+        User::updateOrCreate(
+            ['email' => 'checker@dilg-silang.gov.ph'],
+            [
+                'name' => 'DILG Checker',
+                'password' => Hash::make('password'),
+                'role' => 'checker',
+                'position' => 'Document Reviewer',
+                'is_active' => true,
+            ]
+        );
 
         // Barangay users (first 5 barangays get test accounts)
         $barangays = Barangay::take(5)->get();
         foreach ($barangays as $i => $barangay) {
-            User::create([
-                'name' => "Barangay Secretary " . ($i + 1),
-                'email' => "barangay" . ($i + 1) . "@silang.gov.ph",
-                'password' => Hash::make('password'),
-                'role' => 'barangay',
-                'barangay_id' => $barangay->id,
-                'position' => 'Barangay Secretary',
-            ]);
+            User::updateOrCreate(
+                ['email' => "barangay" . ($i + 1) . "@silang.gov.ph"],
+                [
+                    'name' => "Barangay Secretary " . ($i + 1),
+                    'password' => Hash::make('password'),
+                    'role' => 'barangay',
+                    'barangay_id' => $barangay->id,
+                    'position' => 'Barangay Secretary',
+                    'is_active' => true,
+                ]
+            );
         }
     }
 }
