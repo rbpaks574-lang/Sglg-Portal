@@ -29,12 +29,16 @@ php artisan route:clear || true
 php artisan view:clear || true
 php artisan package:discover --ansi || true
 
-echo "==> Running database migrations on TiDB..."
-php artisan migrate --force
+echo "==> Connecting to Database at: ${DB_HOST:-127.0.0.1}:${DB_PORT:-3306} (DB: ${DB_DATABASE:-sglg_portal})..."
+
+echo "==> Running database migrations..."
+php artisan migrate --force || {
+    echo "⚠️ Warning: Database migration failed. Please check your DB_HOST, DB_PORT, DB_USERNAME, and DB_PASSWORD in Render Environment Variables."
+}
 
 if [ "${DB_SEED_ON_BOOT}" = "true" ] || [ "${DB_SEED_ON_BOOT}" = "1" ]; then
     echo "==> Seeding database (Admin, Checker, Barangays)..."
-    php artisan db:seed --force
+    php artisan db:seed --force || echo "⚠️ Seeding failed or already seeded."
 fi
 
 echo "==> Optimizing configuration & route caches..."
