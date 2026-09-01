@@ -44,8 +44,8 @@ RUN composer install --no-dev --no-interaction --no-scripts --prefer-dist --opti
 # Copy application source code
 COPY . .
 
-# Finish composer autoload dump
-RUN composer dump-autoload --optimize --ignore-platform-reqs
+# Finish composer autoload dump without running artisan scripts during build
+RUN composer dump-autoload --optimize --no-scripts
 
 # Copy configuration files
 COPY nginx.conf /etc/nginx/nginx.conf.template

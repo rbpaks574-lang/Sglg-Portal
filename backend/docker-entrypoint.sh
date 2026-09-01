@@ -21,7 +21,8 @@ chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 echo "==> Linking storage..."
 php artisan storage:link --force || true
 
-echo "==> Optimizing caches..."
+echo "==> Discovering packages & optimizing caches..."
+php artisan package:discover --ansi || true
 php artisan config:cache || true
 php artisan route:cache || true
 php artisan view:cache || true
