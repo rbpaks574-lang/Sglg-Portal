@@ -1,0 +1,56 @@
+services:
+  # -------------------------------------------------------------
+  # Backend Web Service (Laravel 10 + Nginx + PHP-FPM in Docker)
+  # -------------------------------------------------------------
+  - type: web
+    name: sglg-portal-backend
+    runtime: docker
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    plan: free
+    region: singapore
+    envVars:
+      - key: APP_NAME
+        value: SGLG Portal
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_KEY
+        value: base64:PRbhPQ9I21L5fjm5LcwGeDQaMNugoqc3CuAkVTs6Bf4=
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: LOG_LEVEL
+        value: error
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_PORT
+        value: "4000"
+      - key: MYSQL_ATTR_SSL_CA
+        value: /etc/ssl/certs/ca-certificates.crt
+      - key: DB_SEED_ON_BOOT
+        value: "true"
+      - key: DB_HOST
+        sync: false
+      - key: DB_DATABASE
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+
+  # -------------------------------------------------------------
+  # Frontend Static Site (React + Vite SPA)
+  # -------------------------------------------------------------
+  - type: static
+    name: sglg-portal-frontend
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        sync: false

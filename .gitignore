@@ -1,0 +1,46 @@
+# Root .gitignore for SGLG Portal
+
+# Environment Files
+.env
+.env.backup
+.env.production
+.env.local
+.env.*.local
+
+# Dependency directories
+/backend/vendor/
+/frontend/node_modules/
+node_modules/
+vendor/
+
+# Laravel Storage & Cache
+/backend/storage/*.key
+/backend/storage/app/public/submissions/*
+/backend/storage/app/public/templates/*
+/backend/storage/framework/cache/*
+/backend/storage/framework/sessions/*
+/backend/storage/framework/views/*
+/backend/storage/logs/*
+!/backend/storage/app/public/.gitignore
+!/backend/storage/framework/cache/.gitignore
+!/backend/storage/framework/sessions/.gitignore
+!/backend/storage/framework/views/.gitignore
+!/backend/storage/logs/.gitignore
+/backend/bootstrap/cache/*
+!/backend/bootstrap/cache/.gitignore
+
+# Frontend Build
+/frontend/dist/
+/frontend/dist-ssr/
+*.local
+
+# IDEs & System Files
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+Thumbs.db

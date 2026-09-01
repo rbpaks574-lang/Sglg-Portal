@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Senior-friendly base styles */
+html {
+  font-size: 18px;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Larger click targets */
+.btn {
+  min-height: 3rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* Better form inputs for seniors */
+.input, .select, .textarea {
+  font-size: 1rem;
+  min-height: 3rem;
+}
+
+/* Card hover effect */
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Status badges */
+.status-pending { @apply badge badge-warning gap-1; }
+.status-under_review { @apply badge badge-info gap-1; }
+.status-verified { @apply badge badge-success gap-1; }
+.status-returned { @apply badge badge-error gap-1; }
+.status-overdue { @apply badge badge-error gap-1; }
+.status-not_submitted { @apply badge badge-ghost gap-1; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #f1f1f1; }
+::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #a1a1a1; }
+
+/* Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
