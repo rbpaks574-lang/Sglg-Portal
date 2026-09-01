@@ -22,7 +22,13 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        // Auto-seed if database is empty on first boot
+        if (User::count() === 0) {
+            \Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
+        }
+
+        $email = strtolower(trim($request->email));
+        $user = User::where('email', $email)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([

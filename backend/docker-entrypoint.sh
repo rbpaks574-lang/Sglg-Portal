@@ -21,7 +21,8 @@ chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 echo "==> Linking storage..."
-php artisan storage:link --force || true
+rm -rf /var/www/html/public/storage
+php artisan storage:link || true
 
 echo "==> Clearing old caches & discovering packages..."
 php artisan config:clear || true
